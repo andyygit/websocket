@@ -17,40 +17,58 @@
   </head>
 
   <body>
-    <h1>WebSocket Example</h1>
-    <div class="container">
-      <label>Send Message to Server:</label> <br /><br />
-      <input type="text" id="messageInput" />
-      <button onclick="sendMessage()">Send</button>
-      <button onclick="closeSocket()">Close websocket</button>
-      <div id="output"></div>
-    </div>
+    <h1>WebSocketStream Test</h1>
+    <button id="close" onclick="closeSocket()" disabled>Close socket connection</button>
+    <input type="text" id="messageInput" />
+    <div id="output"></div>
 
     <script>
-      const socket = new WebSocket('ws://localhost:8080');
+      const output = document.querySelector('#output');
+      const closeBtn = document.querySelector('#close');
+      const messageInput = document.querySelector('#messageInput');
+      const states = [
+        'CONNECTING (0) - Socket has been created. The connection is not yet open.',
+        'OPEN (1) - The connection is open and ready to communicate.',
+        'CLOSING (2) - The connection is in the process of closing.',
+        'CLOSED (3) - The connection is closed or could not be opened.',
+      ];
 
-      socket.onopen = function (event) {
-        alert('Connected to WebSocket Server');
+      const writeToScreen = (message) => {
+        const pElem = document.createElement('p');
+        pElem.textContent = message;
+        output.appendChild(pElem);
       };
 
-      socket.onmessage = function (event) {
-        const outputDiv = document.getElementById('output');
-        outputDiv.innerHTML += `<p>Received <b>"${event.data}"</b> from server.</p>`;
-      };
-
-      socket.onclose = function (event) {
-        console.log('Disconnected from WebSocket server');
-      };
-
-      function sendMessage() {
-        const messageInput = document.getElementById('messageInput');
-        const message = messageInput.value;
-        socket.send(message);
-        messageInput.value = '';
-      }
-      function closeSocket() {
+      const closeSocket = () => {
         socket.close();
-      }
+      };
+
+      const URL = 'ws://localhost:8080';
+      // const URL = 'wss://echo.websocket.org';
+      const socket = new WebSocket(URL);
+
+      messageInput.addEventListener('keyup', (event) => {
+        if (event.key == 'Enter' || event.key == 'NumpadEnter') {
+          socket.send(event.target.value);
+          event.target.value = '';
+        }
+      });
+
+      socket.addEventListener('open', (event) => {
+        writeToScreen(`${states[socket.readyState]}`);
+        closeBtn.disabled = false;
+      });
+      socket.addEventListener('close', (event) => {
+        writeToScreen(`${states[socket.readyState]} - CloseEvent code: ${event.code}`);
+        closeBtn.disabled = true;
+        messageInput.disabled = true;
+      });
+      socket.addEventListener('message', (event) => {
+        writeToScreen(`Message from server: ${event.data}`);
+      });
+      socket.addEventListener('error', (error) => {
+        writeToScreen(`${error}`);
+      });
     </script>
   </body>
 </html>
