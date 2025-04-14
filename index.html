@@ -23,9 +23,16 @@
     <div id="output"></div>
 
     <script>
+      //globals
+      const URL = 'ws://localhost:8080';
+      // const URL = 'wss://echo.websocket.org';
+
+      //html elements
       const output = document.querySelector('#output');
       const closeBtn = document.querySelector('#close');
       const messageInput = document.querySelector('#messageInput');
+
+      //response states
       const states = [
         'CONNECTING (0) - Socket has been created. The connection is not yet open.',
         'OPEN (1) - The connection is open and ready to communicate.',
@@ -33,9 +40,15 @@
         'CLOSED (3) - The connection is closed or could not be opened.',
       ];
 
+      //methods
       const writeToScreen = (message) => {
+        if (output.childElementCount == 20) {
+          while (output.lastElementChild) {
+            output.lastElementChild.remove();
+          }
+        }
         const pElem = document.createElement('p');
-        pElem.textContent = message;
+        pElem.textContent = `${message}`;
         output.appendChild(pElem);
       };
 
@@ -43,8 +56,6 @@
         socket.close();
       };
 
-      const URL = 'ws://localhost:8080';
-      // const URL = 'wss://echo.websocket.org';
       const socket = new WebSocket(URL);
 
       messageInput.addEventListener('keyup', (event) => {
