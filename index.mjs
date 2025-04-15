@@ -47,8 +47,8 @@ wss.on('connection', (ws, req) => {
 
   ws.on('error', onSocketPostError);
   ws.on('message', (msg, isBinary) => {
+    console.log('received %s', msg);
     wss.clients.forEach((client) => {
-      console.log('received %s', msg);
       if (client.readyState === WebSocket.OPEN) {
         client.send(msg, { binary: isBinary });
       }
