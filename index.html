@@ -10,6 +10,16 @@
         color: green;
       }
 
+      #output {
+        height: 30em;
+        overflow: auto;
+        margin-top: 1em;
+      }
+
+      .input-block {
+        margin-top: 1em;
+      }
+
       .container {
         margin: 10px;
       }
@@ -19,8 +29,10 @@
   <body>
     <h1>WebSocketStream Test</h1>
     <button id="close" onclick="closeSocket()" disabled>Close socket connection</button>
-    <input type="text" id="messageInput" />
-    <div id="output"></div>
+    <div class="input-block">
+      <input type="text" id="messageInput" />
+    </div>
+    <pre id="output"></pre>
 
     <script>
       //globals
@@ -42,7 +54,7 @@
 
       //methods
       const writeToScreen = (message) => {
-        if (output.childElementCount == 20) {
+        if (output.childElementCount == 40) {
           while (output.lastElementChild) {
             output.lastElementChild.remove();
           }
@@ -50,6 +62,7 @@
         const pElem = document.createElement('p');
         pElem.textContent = `${message}`;
         output.appendChild(pElem);
+        output.scrollTop = output.scrollHeight;
       };
 
       const closeSocket = () => {
