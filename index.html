@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WebSocket Client</title>
     <style>
+      * {
+        box-sizing: border-box;
+      }
       h1 {
         color: green;
       }
@@ -13,7 +16,7 @@
       #output {
         height: 30em;
         overflow: auto;
-        margin-top: 1em;
+        margin: 2em 0;
       }
 
       .input-block {
@@ -28,11 +31,11 @@
 
   <body>
     <h1>WebSocketStream Test</h1>
-    <button id="close" onclick="closeSocket()" disabled>Close socket connection</button>
     <div class="input-block">
-      <input type="text" id="messageInput" />
+      <input type="text" id="messageInput" placeholder="send message" />
     </div>
     <pre id="output"></pre>
+    <button id="close" onclick="closeSocket()" disabled hidden>Close socket connection</button>
 
     <script>
       //globals
@@ -53,13 +56,14 @@
       ];
 
       //methods
-      const writeToScreen = (message) => {
+      const writeToScreen = (message, isError = false) => {
         if (output.childElementCount == 40) {
           while (output.lastElementChild) {
             output.lastElementChild.remove();
           }
         }
         const pElem = document.createElement('p');
+        pElem.style.color = isError == true ? 'red' : '';
         pElem.textContent = `${message}`;
         output.appendChild(pElem);
         output.scrollTop = output.scrollHeight;
@@ -78,21 +82,23 @@
         }
       });
 
-      socket.addEventListener('open', (event) => {
+      socket.onopen = (event) => {
         writeToScreen(`${states[socket.readyState]}`);
         closeBtn.disabled = false;
-      });
-      socket.addEventListener('close', (event) => {
+        closeBtn.removeAttribute('hidden');
+      };
+      socket.onclose = (event) => {
         writeToScreen(`${states[socket.readyState]} - CloseEvent code: ${event.code}`);
         closeBtn.disabled = true;
         messageInput.disabled = true;
-      });
-      socket.addEventListener('message', (event) => {
+        messageInput.removeAttribute('placeholder');
+      };
+      socket.onmessage = (event) => {
         writeToScreen(`Message from server: ${event.data}`);
-      });
-      socket.addEventListener('error', (error) => {
-        writeToScreen(`${error}`);
-      });
+      };
+      socket.onerror = (error) => {
+        writeToScreen(`Socket onerror error obj keys: ${Object.keys(error)}`, true);
+      };
     </script>
   </body>
 </html>

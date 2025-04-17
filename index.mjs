@@ -30,7 +30,7 @@ httpServer.on('upgrade', (req, socket, head) => {
   socket.on('error', onSocketPreError);
 
   //perform auth
-  if (!!req.headers['BadAuth']) {
+  if (!req.headers.authorization) {
     socket.write('HTTP/1.1 401 Unauthorized zzzzzzzzzzzz\r\n\r\n');
     socket.destroy();
     return;
