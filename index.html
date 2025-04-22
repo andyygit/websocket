@@ -96,8 +96,8 @@
       socket.onmessage = (event) => {
         writeToScreen(`Message from server: ${event.data}`);
       };
-      socket.onerror = (error) => {
-        writeToScreen(`Socket onerror error obj keys: ${Object.keys(error)}`, true);
+      socket.onerror = (event) => {
+        writeToScreen(`Socket onerror error obj keys: ${Object.keys(event)}`, true);
       };
     </script>
   </body>

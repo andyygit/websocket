@@ -17,11 +17,11 @@ httpServer.on('request', (req, res) => {
 
 const wss = new WebSocketServer({ noServer: true });
 
-//http handler
+//http error handler
 const onSocketPreError = (error) => {
   console.log(error);
 };
-//websocket handler
+//websocket error handler
 const onSocketPostError = (error) => {
   console.log(error);
 };
@@ -30,11 +30,11 @@ httpServer.on('upgrade', (req, socket, head) => {
   socket.on('error', onSocketPreError);
 
   //perform auth
-  if (!req.headers.authorization) {
-    socket.write('HTTP/1.1 401 Unauthorized zzzzzzzzzzzz\r\n\r\n');
-    socket.destroy();
-    return;
-  }
+  // if (!req.headers.authorization) {
+  //   socket.write('HTTP/1.1 401 Unauthorized zzzzzzzzzzzz\r\n\r\n');
+  //   socket.destroy();
+  //   return;
+  // }
 
   wss.handleUpgrade(req, socket, head, (ws) => {
     socket.removeListener('error', onSocketPreError);
