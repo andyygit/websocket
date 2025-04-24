@@ -74,6 +74,7 @@
       };
 
       const socket = new WebSocket(URL);
+      socket.binaryType = 'arraybuffer'; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       messageInput.addEventListener('keyup', (event) => {
         if (event.key == 'Enter' || event.key == 'NumpadEnter') {
@@ -81,6 +82,16 @@
           event.target.value = '';
         }
       });
+      // send binary data // chrome dev tools 1 caracter = 1 byte, pentru chat nu e fezabil, daca e sa trimiti 1 byte merita (8 biti care sa ii descompui)
+      // adica alte aplicatii decat chat, cu payload variabil
+      // messageInput.addEventListener('keyup', (event) => {
+      //   if (event.key == 'Enter' || event.key == 'NumpadEnter') {
+      //     let arr = new Uint8Array(event.target.value.length);
+      //     arr.set(new TextEncoder().encode(event.target.value), 0);
+      //     socket.send(arr);
+      //     event.target.value = '';
+      //   }
+      // });
 
       socket.onopen = (event) => {
         writeToScreen(`${states[socket.readyState]}`);

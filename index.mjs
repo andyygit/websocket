@@ -47,10 +47,13 @@ wss.on('connection', (ws, req) => {
 
   ws.on('error', onSocketPostError);
   ws.on('message', (msg, isBinary) => {
-    console.log('received %s', msg);
+    // console.log(isBinary);
+    // console.log('received %s', msg); // plain text otherwise buffer output
+    console.log(msg);
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(msg, { binary: isBinary });
+        // client.send(msg, { binary: isBinary });
+        client.send(msg, { binary: true });
       }
     });
   });
